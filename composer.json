@@ -39,12 +39,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "Football\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "Football\\Tests\\": "tests/"
         }
     },
     "replace": {
