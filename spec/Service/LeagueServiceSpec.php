@@ -62,7 +62,7 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $response = $this->createLeague($leagueModel);
 
-        $response->shouldBeAnInstanceOf(ResponseModel::class)
+        $response->shouldBeAnInstanceOf(ResponseModel::class);
     }
 
     function it_should_throw_an_exception_in_case_of_database_error_during_league_creation(
@@ -78,5 +78,72 @@ class LeagueServiceSpec extends ObjectBehavior
         $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
 
         $this->shouldThrow(FootballException::class)->during('createLeague', [$leagueModel]);
+    }
+
+    function it_successfully_creates_a_team(
+        EntityFactoryInterface $entityFactory,
+        LeagueEntity $leagueEntity,
+        TeamEntity $teamEntity,
+        LeagueRepositoryInterface $leagueRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $teamModel = new TeamModel();
+        $teamModel->name = 'Team 1';
+        $teamModel->strip = 'Black';
+
+        $leagueId = 1;
+        $teamId = 1;
+
+        $leagueEntity->getId()->willReturn($leagueId);
+        $teamEntity->getId()->willReturn($teamId);
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn($leagueEntity);
+
+        $entityFactory->createTeam($teamModel, $leagueEntity)->shouldBeCalled()->willReturn($teamEntity);
+
+        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
+        $entityManager->flush()->shouldBeCalled()->willReturn(null);
+
+        $response = $this->createTeam($leagueId, $teamModel);
+
+        $response->shouldBeAnInstanceOf(ResponseModel::class);
+    }
+
+    function it_should_throw_an_exception_in_case_of_database_error_during_team_creation(
+        EntityFactoryInterface $entityFactory,
+        LeagueEntity $leagueEntity,
+        TeamEntity $teamEntity,
+        LeagueRepositoryInterface $leagueRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $teamModel = new TeamModel();
+        $teamModel->name = 'Team 1';
+        $teamModel->strip = 'Black';
+
+        $leagueId = 1;
+        $teamId = 1;
+
+        $leagueEntity->getId()->willReturn($leagueId);
+        $teamEntity->getId()->willReturn($teamId);
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn($leagueEntity);
+
+        $entityFactory->createTeam($teamModel, $leagueEntity)->shouldBeCalled()->willReturn($teamEntity);
+
+        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
+        $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
+
+        $this->shouldThrow(FootballException::class)->during('createTeam', [$leagueId, $teamModel]);
+    }
+
+    function it_should_throw_an_exception_if_league_is_non_existent_during_team_creation(
+        LeagueRepositoryInterface $leagueRepository
+    ) {
+        $leagueId = 1;
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn(null);
+
+
+        $this->shouldThrow(NotFoundException::class)->during('createTeam', [$leagueId, new TeamModel()]);
     }
 }

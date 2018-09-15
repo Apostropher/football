@@ -3,6 +3,8 @@
 namespace Football\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Football\Exception\FootballException;
+use Football\Exception\NotFoundException;
 use Football\Factory\EntityFactoryInterface;
 use Football\Factory\ModelFactoryInterface;
 use Football\Model\Filter as FilterModel;
@@ -12,9 +14,6 @@ use Football\Model\Search\AbstractCollection as AbstractCollectionModel;
 use Football\Model\Team as TeamModel;
 use Football\Repository\LeagueRepositoryInterface;
 use Football\Repository\TeamRepositoryInterface;
-use Football\Exception\FootballException;
-use Football\Exception\NotFoundException;
-use Doctrine\DBAL\DBALException;
 
 interface LeagueServiceInterface
 {
