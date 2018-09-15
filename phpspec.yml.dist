@@ -1,0 +1,4 @@
+suites:
+    football_suite:
+        namespace: Football
+        psr4_prefix: Football
