@@ -3,8 +3,8 @@
 namespace Football\Controller;
 
 use JMS\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class AbstractFootballController extends AbstractController
 {
