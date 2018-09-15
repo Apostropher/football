@@ -47,7 +47,7 @@ abstract class AbstractLeague
         return $this->id;
     }
 
-    public function setId(string $id): TemplateInterface
+    public function setId(string $id): AbstractLeague
     {
         $this->id = $id;
 
@@ -59,7 +59,7 @@ abstract class AbstractLeague
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): TemplateInterface
+    public function setCreatedAt(DateTime $createdAt): AbstractLeague
     {
         $this->createdAt = $createdAt;
 
@@ -71,7 +71,7 @@ abstract class AbstractLeague
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(DateTime $updatedAt): TemplateInterface
+    public function setUpdatedAt(DateTime $updatedAt): AbstractLeague
     {
         $this->updatedAt = $updatedAt;
 
@@ -83,7 +83,7 @@ abstract class AbstractLeague
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(DateTime $deletedAt): TemplateInterface
+    public function setDeletedAt(DateTime $deletedAt): AbstractLeague
     {
         $this->deletedAt = $deletedAt;
 
