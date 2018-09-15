@@ -146,4 +146,107 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $this->shouldThrow(NotFoundException::class)->during('createTeam', [$leagueId, new TeamModel()]);
     }
+
+    function it_successfully_replaces_a_team(
+        EntityFactoryInterface $entityFactory,
+        TeamEntity $teamEntity,
+        TeamRepositoryInterface $teamRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $teamModel = new TeamModel();
+        $teamModel->name = 'Team 1';
+        $teamModel->strip = 'Black';
+
+        $leagueId = 1;
+        $teamId = 1;
+
+        $teamEntity->getId()->willReturn($teamId);
+
+        $teamRepository->findUndeletedByIdAndLeagueId($teamId, $leagueId)->shouldBeCalled()->willReturn($teamEntity);
+
+        $entityFactory->replaceTeam($teamModel, $teamEntity)->shouldBeCalled()->willReturn($teamEntity);
+
+        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
+        $entityManager->flush()->shouldBeCalled()->willReturn(null);
+
+        $this->replaceTeam($leagueId, $teamId, $teamModel);
+    }
+
+    function it_should_throw_an_exception_in_case_of_database_error_during_league_replacement(
+        EntityFactoryInterface $entityFactory,
+        TeamEntity $teamEntity,
+        TeamRepositoryInterface $teamRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $teamModel = new TeamModel();
+        $teamModel->name = 'Team 1';
+        $teamModel->strip = 'Black';
+
+        $leagueId = 1;
+        $teamId = 1;
+
+        $teamEntity->getId()->willReturn($teamId);
+
+        $teamRepository->findUndeletedByIdAndLeagueId($teamId, $leagueId)->shouldBeCalled()->willReturn($teamEntity);
+
+        $entityFactory->replaceTeam($teamModel, $teamEntity)->shouldBeCalled()->willReturn($teamEntity);
+
+        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
+        $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
+
+        $this->shouldThrow(FootballException::class)->during('replaceTeam', [$leagueId, $teamId, $teamModel]);
+    }
+
+    function it_should_throw_an_exception_if_team_is_non_existent_during_team_replacement(
+        TeamRepositoryInterface $teamRepository
+    ) {
+        $leagueId = 1;
+        $teamId = 1;
+
+        $teamRepository->findUndeletedByIdAndLeagueId($teamId, $leagueId)->shouldBeCalled()->willReturn(null);
+
+
+        $this->shouldThrow(NotFoundException::class)->during('replaceTeam', [$leagueId, $teamId, new TeamModel()]);
+    }
+
+    function it_successfully_deletes_a_league(
+        LeagueEntity $leagueEntity,
+        LeagueRepositoryInterface $leagueRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $leagueId = 1;
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn($leagueEntity);
+
+        $entityManager->remove($leagueEntity)->shouldBeCalled()->willReturn(null);
+        $entityManager->flush()->shouldBeCalled()->willReturn(null);
+
+        $this->deleteLeague($leagueId);
+    }
+
+    function it_should_throw_an_exception_in_case_of_database_error_during_league_deletion(
+        LeagueEntity $leagueEntity,
+        LeagueRepositoryInterface $leagueRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $leagueId = 1;
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn($leagueEntity);
+
+        $entityManager->remove($leagueEntity)->shouldBeCalled()->willReturn(null);
+        $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
+
+        $this->shouldThrow(FootballException::class)->during('deleteLeague', [$leagueId]);
+    }
+
+    function it_should_throw_an_exception_if_league_is_non_existent_during_deletion(
+        LeagueRepositoryInterface $leagueRepository
+    ) {
+        $leagueId = 1;
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn(null);
+
+
+        $this->shouldThrow(NotFoundException::class)->during('deleteLeague', [$leagueId]);
+    }
 }

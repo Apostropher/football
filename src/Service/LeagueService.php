@@ -57,13 +57,13 @@ class LeagueService implements LeagueServiceInterface
         return new ResponseModel();
     }
 
-    public function replaceTeam($leagueId, $teamId, TeamModel $team): boolean
+    public function replaceTeam($leagueId, $teamId, TeamModel $team)
     {
-        return true;
+        return null;
     }
 
-    public function deleteLeague($leagueId): boolean
+    public function deleteLeague($leagueId)
     {
-        return true;
+        return null;
     }
 }

@@ -44,11 +44,11 @@ interface LeagueServiceInterface
      * @throws FootballException
      * @throws NotFoundException
      */
-    public function replaceTeam($leagueId, $teamId, TeamModel $team): boolean;
+    public function replaceTeam($leagueId, $teamId, TeamModel $team);
 
     /**
      * @throws FootballException
      * @throws NotFoundException
      */
-    public function deleteLeague($leagueId): boolean;
+    public function deleteLeague($leagueId);
 }
