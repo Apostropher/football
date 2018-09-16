@@ -71,7 +71,10 @@ class LeagueController extends AbstractFootballController implements LeagueContr
         $filter = new FilterModel();
 
         $filter->page = $request->get('page', FilterModel::DEFAULT_PAGE);
-        $filter->limit = $request->get('limit', FilterModel::DEFAULT_LIMIT);
+        $filter->limit = $this->normalisePaginationLimit(
+            $request->get('limit', FilterModel::DEFAULT_LIMIT),
+            FilterModel::DEFAULT_LIMIT
+        );
 
         $result = $this->leagueService->listLeagues($filter);
 
@@ -188,7 +191,10 @@ class LeagueController extends AbstractFootballController implements LeagueContr
         $filter = new FilterModel();
 
         $filter->page = $request->get('page', FilterModel::DEFAULT_PAGE);
-        $filter->limit = $request->get('limit', FilterModel::DEFAULT_LIMIT);
+        $filter->limit = $this->normalisePaginationLimit(
+            $request->get('limit', FilterModel::DEFAULT_LIMIT),
+            FilterModel::DEFAULT_LIMIT
+        );
 
         $result = $this->leagueService->listTeams($leagueId, $filter);
 
