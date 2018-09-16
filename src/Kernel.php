@@ -15,6 +15,14 @@ class Kernel extends BaseKernel
 
     const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
+    public function __construct($environment, $debug)
+    {
+        ini_set('date.timezone', 'UTC');
+        date_default_timezone_set('UTC');
+
+        parent::__construct($environment, $debug);
+    }
+
     public function getCacheDir()
     {
         return $this->getProjectDir().'/var/cache/'.$this->environment;
