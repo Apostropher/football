@@ -20,11 +20,28 @@ class LeagueRepository implements LeagueRepositoryInterface
 
     public function findPaginatedUndeleted(FilterModel $filter): PaginationInterface
     {
-        return $this->paginator->paginate([]);
+        $qb = $this
+            ->createUndeletedQueryBuilder()
+            ->orderBy('l.updatedAt', 'DESC');
+
+        return $this->paginator->paginate($qb->getQuery(), $filter->page, $filter->limit/*, ['wrap-queries' => true]*/);
     }
 
     public function findUndeletedById($id): LeagueEntity
     {
-        return new LeagueEntity();
+        return $this
+            ->createUndeletedQueryBuilder()
+            ->andWhere('l.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    private function createUndeletedQueryBuilder()
+    {
+        return $this
+            ->createQueryBuilder('l')
+            ->select('l')
+            ->where('l.deletedAt IS NULL');
     }
 }
