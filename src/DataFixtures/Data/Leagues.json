@@ -1,0 +1,29 @@
+[
+    {
+        "name": "LEAGUE 1",
+        "reference": "league-1",
+        "teams": [
+            {
+                "name": "TEAM 1",
+                "strip": "red",
+                "reference": "team-1"
+            },
+            {
+                "name": "TEAM 2",
+                "strip": "green",
+                "reference": "team-2"
+            }
+        ]
+    },
+    {
+        "name": "LEAGUE 2",
+        "reference": "league-2",
+        "teams": [
+            {
+                "name": "TEAM 3",
+                "strip": "blue",
+                "reference": "team-3"
+            }
+        ]
+    }
+]

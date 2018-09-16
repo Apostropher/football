@@ -4,8 +4,8 @@ namespace Football\Controller;
 
 use Football\Exception\FootballException;
 use Football\Exception\NotFoundException;
-use Football\Model\Filter as FilterModel;
 use Football\Model\League as LeagueModel;
+use Football\Model\Search\Filter as FilterModel;
 use Football\Model\Team as TeamModel;
 use Football\Service\LeagueServiceInterface;
 use JMS\Serializer\Exception\Exception as JMSSerializerException;

@@ -22,4 +22,10 @@ class Team
      * @Assert\NotBlank(message = "team.creation_or_replacement.name.blank")
      */
     public $name;
+
+    /**
+     * @JMSSerializer\Type("string")
+     * @Assert\NotBlank(message = "team.creation_or_replacement.strip.blank")
+     */
+    public $strip;
 }

@@ -10,7 +10,7 @@ use Football\Repository\TeamRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Football\Factory\EntityFactoryInterface;
 use Football\Factory\ModelFactoryInterface;
-use Football\Model\Filter as FilterModel;
+use Football\Model\Search\Filter as FilterModel;
 use Football\Model\League as LeagueModel;
 use Football\Model\Response as ResponseModel;
 use Football\Model\Search\AbstractCollection as AbstractCollectionModel;
@@ -20,6 +20,9 @@ use Football\Entity\Team as TeamEntity;
 use Football\Exception\FootballException;
 use Football\Exception\NotFoundException;
 use Doctrine\DBAL\DBALException;
+use Knp\Component\Pager\Paginator;
+use Football\Model\Search\LeagueCollection as LeagueCollectionModel;
+use Football\Model\Search\TeamCollection as TeamCollectionModel;
 
 class LeagueServiceSpec extends ObjectBehavior
 {
@@ -101,7 +104,6 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $entityFactory->createTeam($teamModel, $leagueEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willReturn(null);
 
         $response = $this->createTeam($leagueId, $teamModel);
@@ -130,7 +132,6 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $entityFactory->createTeam($teamModel, $leagueEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
 
         $this->shouldThrow(FootballException::class)->during('createTeam', [$leagueId, $teamModel]);
@@ -166,13 +167,12 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $entityFactory->replaceTeam($teamModel, $teamEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willReturn(null);
 
         $this->replaceTeam($leagueId, $teamId, $teamModel);
     }
 
-    function it_should_throw_an_exception_in_case_of_database_error_during_league_replacement(
+    function it_should_throw_an_exception_in_case_of_database_error_during_team_replacement(
         EntityFactoryInterface $entityFactory,
         TeamEntity $teamEntity,
         TeamRepositoryInterface $teamRepository,
@@ -191,7 +191,6 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $entityFactory->replaceTeam($teamModel, $teamEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
 
         $this->shouldThrow(FootballException::class)->during('replaceTeam', [$leagueId, $teamId, $teamModel]);
@@ -248,5 +247,60 @@ class LeagueServiceSpec extends ObjectBehavior
 
 
         $this->shouldThrow(NotFoundException::class)->during('deleteLeague', [$leagueId]);
+    }
+
+    function it_successfully_lists_leagues(
+        LeagueEntity $leagueEntity,
+        LeagueRepositoryInterface $leagueRepository,
+        ModelFactoryInterface $modelFactory
+    ) {
+        $filter = new FilterModel();
+        $filter->page = 1;
+        $filter->limit = 1;
+
+        $paginator = new Paginator();
+        $leagueEntities = $paginator->paginate([$leagueEntity]);
+
+        $leagueEntity->getName()->willReturn('League 1');
+        $leagueEntity->getId()->willReturn(1);
+
+        $leagueRepository->findPaginatedUndeleted($filter)->shouldBeCalled()->willReturn($leagueEntities);
+
+        $modelFactory->listLeagues($leagueEntities, $filter->page, $filter->limit)->shouldBeCalled();
+
+        $collection = $this->listLeagues($filter);
+
+        $collection->shouldBeAnInstanceOf(LeagueCollectionModel::class);
+    }
+
+    function it_successfully_lists_teams(
+        LeagueEntity $leagueEntity,
+        TeamEntity $teamEntity,
+        TeamRepositoryInterface $teamRepository,
+        ModelFactoryInterface $modelFactory
+    ) {
+        $filter = new FilterModel();
+        $filter->page = 1;
+        $filter->limit = 1;
+
+        $leagueId = 1;
+
+        $paginator = new Paginator();
+        $teamEntities = $paginator->paginate([$teamEntity]);
+
+        $leagueEntity->getName()->willReturn('League 1');
+        $leagueEntity->getId()->willReturn($leagueId);
+
+        $teamEntity->getName()->willReturn('Team 1');
+        $teamEntity->getId()->willReturn(1);
+        $teamEntity->getLeague()->willReturn($leagueEntity);
+
+        $teamRepository->findPaginatedUndeletedByLeagueId($leagueId, $filter)->shouldBeCalled()->willReturn($teamEntities);
+
+        $modelFactory->listTeams($teamEntities, $filter->page, $filter->limit)->shouldBeCalled();
+
+        $collection = $this->listTeams($leagueId, $filter);
+
+        $collection->shouldBeAnInstanceOf(TeamCollectionModel::class);
     }
 }

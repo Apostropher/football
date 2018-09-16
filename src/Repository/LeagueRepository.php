@@ -3,7 +3,7 @@
 namespace Football\Repository;
 
 use Football\Entity\League as LeagueEntity;
-use Football\Model\Filter as FilterModel;
+use Football\Model\Search\Filter as FilterModel;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -20,11 +20,28 @@ class LeagueRepository implements LeagueRepositoryInterface
 
     public function findPaginatedUndeleted(FilterModel $filter): PaginationInterface
     {
-        return $this->paginator->paginate([]);
+        $qb = $this
+            ->createUndeletedQueryBuilder()
+            ->orderBy('l.updatedAt', 'DESC');
+
+        return $this->paginator->paginate($qb->getQuery(), $filter->page, $filter->limit/*, ['wrap-queries' => true]*/);
     }
 
-    public function findUndeletedById($id): LeagueEntity
+    public function findUndeletedById($id): ?LeagueEntity
     {
-        return new LeagueEntity();
+        return $this
+            ->createUndeletedQueryBuilder()
+            ->andWhere('l.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    private function createUndeletedQueryBuilder()
+    {
+        return $this
+            ->createQueryBuilder('l')
+            ->select('l')
+            ->where('l.deletedAt IS NULL');
     }
 }
