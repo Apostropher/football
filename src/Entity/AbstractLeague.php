@@ -42,12 +42,12 @@ abstract class AbstractLeague
      */
     protected $deletedAt;
 
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(string $id): AbstractLeague
+    public function setId(int $id): AbstractLeague
     {
         $this->id = $id;
 

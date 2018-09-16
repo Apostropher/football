@@ -102,11 +102,8 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn($leagueEntity);
 
-        $leagueEntity->addTeam($teamEntity)->shouldBeCalled()->willReturn($leagueEntity);
-
         $entityFactory->createTeam($teamModel, $leagueEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        // $entityManager->persist($leagueEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willReturn(null);
 
         $response = $this->createTeam($leagueId, $teamModel);
@@ -135,7 +132,6 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $entityFactory->createTeam($teamModel, $leagueEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        // $entityManager->persist($leagueEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
 
         $this->shouldThrow(FootballException::class)->during('createTeam', [$leagueId, $teamModel]);
@@ -171,13 +167,12 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $entityFactory->replaceTeam($teamModel, $teamEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willReturn(null);
 
         $this->replaceTeam($leagueId, $teamId, $teamModel);
     }
 
-    function it_should_throw_an_exception_in_case_of_database_error_during_league_replacement(
+    function it_should_throw_an_exception_in_case_of_database_error_during_team_replacement(
         EntityFactoryInterface $entityFactory,
         TeamEntity $teamEntity,
         TeamRepositoryInterface $teamRepository,
@@ -196,7 +191,6 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $entityFactory->replaceTeam($teamModel, $teamEntity)->shouldBeCalled()->willReturn($teamEntity);
 
-        $entityManager->persist($teamEntity)->shouldBeCalled()->willReturn(null);
         $entityManager->flush()->shouldBeCalled()->willThrow(DBALException::class);
 
         $this->shouldThrow(FootballException::class)->during('replaceTeam', [$leagueId, $teamId, $teamModel]);

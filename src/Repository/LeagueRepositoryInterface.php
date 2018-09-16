@@ -14,5 +14,5 @@ interface LeagueRepositoryInterface
 
     public function findPaginatedUndeleted(FilterModel $filter): PaginationInterface;
 
-    public function findUndeletedById($id): LeagueEntity;
+    public function findUndeletedById($id): ?LeagueEntity;
 }

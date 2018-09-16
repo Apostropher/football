@@ -27,7 +27,7 @@ class LeagueRepository implements LeagueRepositoryInterface
         return $this->paginator->paginate($qb->getQuery(), $filter->page, $filter->limit/*, ['wrap-queries' => true]*/);
     }
 
-    public function findUndeletedById($id): LeagueEntity
+    public function findUndeletedById($id): ?LeagueEntity
     {
         return $this
             ->createUndeletedQueryBuilder()

@@ -25,7 +25,7 @@ class TeamRepository implements TeamRepositoryInterface
         return $this->paginator->paginate($qb->getQuery(), $filter->page, $filter->limit/*, ['wrap-queries' => true]*/);
     }
 
-    public function findUndeletedByIdAndLeagueId($id, $leagueId): TeamEntity
+    public function findUndeletedByIdAndLeagueId($id, $leagueId): ?TeamEntity
     {
         return $this
             ->createUndeletedByLeagueIdQueryBuilder($leagueId)

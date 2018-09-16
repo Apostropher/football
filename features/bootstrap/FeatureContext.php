@@ -6,6 +6,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Testwork\Hook\Scope\AfterSuiteScope;
 use Behat\Testwork\Hook\Scope\BeforeSuiteScope;
 use Football\DataFixtures\Load01Users;
+use Football\DataFixtures\Load02Leagues;
 use Symfony\Bundle\WebServerBundle\Command\ServerStartCommand;
 use Symfony\Bundle\WebServerBundle\Command\ServerStopCommand;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -67,6 +68,7 @@ class FeatureContext implements KernelAwareContextInterface, SnippetAcceptingCon
             'football',
             [
                 Load01Users::class,
+                Load02Leagues::class,
             ]
         );
     }
