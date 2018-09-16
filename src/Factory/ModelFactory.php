@@ -58,6 +58,7 @@ class ModelFactory implements ModelFactoryInterface
 
         $teamModel->id = $teamEntity->getId();
         $teamModel->name = $teamEntity->getName();
+        $teamModel->strip = $teamEntity->getStrip();
         $teamModel->leagueId = $teamEntity->getLeague()->getId();
 
         return $teamModel;
