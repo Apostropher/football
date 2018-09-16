@@ -29,6 +29,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    Football\Service\JWTService:
+    app.service.jwt:
+        class: Football\Service\JWTService
+        public: true
         arguments:
             $secret: '%kernel.environment%'
+    Football\Service\JWTService: '@app.service.jwt'
+    Football\Service\JWTServiceInterface: '@Football\Service\JWTService'

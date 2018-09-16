@@ -2,6 +2,8 @@
 
 namespace Football\Factory;
 
+use Football\Entity\League as LeagueEntity;
+use Football\Entity\Team as TeamEntity;
 use Football\Model\League as LeagueModel;
 use Football\Model\Search\LeagueCollection as LeagueCollectionModel;
 use Football\Model\Search\TeamCollection as TeamCollectionModel;
@@ -19,15 +21,20 @@ class ModelFactory implements ModelFactoryInterface
         $collection->total = $items->getTotalItemCount();
 
         foreach ($items as $item) {
-            $leagueModel = new LeagueModel();
-
-            $leagueModel->id = $item->getId();
-            $leagueModel->name = $item->getName();
-
-            $collection->leagues[] = $leagueModel;
+            $collection->leagues[] = $this->singleLeague($item);
         }
 
         return $collection;
+    }
+
+    public function singleLeague(LeagueEntity $leagueEntity): LeagueModel
+    {
+        $leagueModel = new LeagueModel();
+
+        $leagueModel->id = $leagueEntity->getId();
+        $leagueModel->name = $leagueEntity->getName();
+
+        return $leagueModel;
     }
 
     public function listTeams(PaginationInterface $items, $page, $limit): TeamCollectionModel
@@ -39,15 +46,21 @@ class ModelFactory implements ModelFactoryInterface
         $collection->total = $items->getTotalItemCount();
 
         foreach ($items as $item) {
-            $teamModel = new TeamModel();
-
-            $teamModel->id = $item->getId();
-            $teamModel->name = $item->getName();
-            $teamModel->leagueId = $item->getLeague()->getId();
-
-            $collection->teams[] = $teamModel;
+            $collection->teams[] = $this->singleTeam($item);
         }
 
         return $collection;
+    }
+
+    public function singleTeam(TeamEntity $teamEntity): TeamModel
+    {
+        $teamModel = new TeamModel();
+
+        $teamModel->id = $teamEntity->getId();
+        $teamModel->name = $teamEntity->getName();
+        $teamModel->strip = $teamEntity->getStrip();
+        $teamModel->leagueId = $teamEntity->getLeague()->getId();
+
+        return $teamModel;
     }
 }

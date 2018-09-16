@@ -86,6 +86,31 @@ class LeagueController extends AbstractFootballController implements LeagueContr
 
     /**
      * @Route(
+     *  "/{leagueId}",
+     *  name="league_single",
+     *  methods={"GET"},
+     *  requirements={"leagueId": "\d+"}
+     * )
+     */
+    public function singleLeague($leagueId): Response
+    {
+        try {
+            $result = $this->leagueService->singleLeague($leagueId);
+
+            return new Response(
+                $this->serializer->serialize(
+                    $result,
+                    'json'
+                ),
+                Response::HTTP_OK
+            );
+        } catch (NotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * @Route(
      *  "/{leagueId}/teams",
      *  name="league_team_creation",
      *  methods={"POST"},
@@ -174,6 +199,31 @@ class LeagueController extends AbstractFootballController implements LeagueContr
             ),
             Response::HTTP_OK
         );
+    }
+
+    /**
+     * @Route(
+     *  "/{leagueId}/teams/{teamId}",
+     *  name="league_team_single",
+     *  methods={"GET"},
+     *  requirements={"leagueId": "\d+", "teamId": "\d+"}
+     * )
+     */
+    public function singleTeam($leagueId, $teamId): Response
+    {
+        try {
+            $result = $this->leagueService->singleTeam($leagueId, $teamId);
+
+            return new Response(
+                $this->serializer->serialize(
+                    $result,
+                    'json'
+                ),
+                Response::HTTP_OK
+            );
+        } catch (NotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage());
+        }
     }
 
     /**

@@ -11,6 +11,8 @@ use Symfony\Bundle\WebServerBundle\Command\ServerStartCommand;
 use Symfony\Bundle\WebServerBundle\Command\ServerStopCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Football\Model\JWT as JWTModel;
+use Behatch\Context\RestContext;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -28,6 +30,7 @@ class FeatureContext implements KernelAwareContextInterface, SnippetAcceptingCon
     protected $kernel;
 
     private $filesPath;
+    private $restContext;
 
     public function __construct($filesPath)
     {
@@ -71,5 +74,29 @@ class FeatureContext implements KernelAwareContextInterface, SnippetAcceptingCon
                 Load02Leagues::class,
             ]
         );
+    }
+
+    /** @BeforeScenario */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+
+        $this->restContext = $environment->getContext(RestContext::class);
+    }
+
+    /**
+     * @Given I add a valid authentication header for user :arg1
+     */
+    public function iAddAValidAuthenticationHeaderForUser($userName)
+    {
+        $payload = new JWTModel\Body();
+
+        $payload->name = $userName;
+
+        $jwtService = $this->kernel->getContainer()->get('app.service.jwt');
+
+        $tokenModel = $jwtService->generateToken($payload);
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', sprintf('Bearer %s', $tokenModel->token));
     }
 }

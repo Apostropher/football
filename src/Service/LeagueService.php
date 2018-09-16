@@ -68,11 +68,33 @@ class LeagueService implements LeagueServiceInterface
         return $this->modelFactory->listLeagues($leagues, $filter->page, $filter->limit);
     }
 
+    public function singleLeague($leagueId): LeagueModel
+    {
+        $leagueEntity = $this->leagueRepository->findUndeletedById($leagueId);
+
+        if (!$leagueEntity instanceof LeagueEntity) {
+            throw new NotFoundException(self::LEAGUE_NOT_FOUND_MESSAGE);
+        }
+
+        return $this->modelFactory->singleLeague($leagueEntity);
+    }
+
     public function listTeams($leagueId, FilterModel $filter): AbstractCollectionModel
     {
         $teams = $this->teamRepository->findPaginatedUndeletedByLeagueId($leagueId, $filter);
 
         return $this->modelFactory->listTeams($teams, $filter->page, $filter->limit);
+    }
+
+    public function singleTeam($leagueId, $teamId): TeamModel
+    {
+        $teamEntity = $this->teamRepository->findUndeletedByIdAndLeagueId($teamId, $leagueId);
+
+        if (!$teamEntity instanceof TeamEntity) {
+            throw new NotFoundException(self::TEAM_NOT_FOUND_MESSAGE);
+        }
+
+        return $this->modelFactory->singleTeam($teamEntity);
     }
 
     public function createTeam($leagueId, TeamModel $team): ResponseModel
