@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @Route("/tokens", defaults={"_format": "json"})
  */
-class TokenController extends AbstractFootballController
+class TokenController extends AbstractFootballController implements TokenControllerInterface
 {
     private $jwtService;
 
