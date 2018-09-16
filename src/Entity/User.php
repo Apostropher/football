@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Football\Repository\UserRepository")
  * @ORM\Table(name="user")
  */
 class User implements UserInterface
@@ -24,11 +24,6 @@ class User implements UserInterface
      * @ORM\Column(name="name", type="string", unique=true)
      */
     private $username;
-
-    /**
-     * @ORM\Column(name="`key`", type="string", unique=true)
-     */
-    private $apiKey;
 
     public function getUsername()
     {
@@ -57,17 +52,5 @@ class User implements UserInterface
 
     public function eraseCredentials()
     {
-    }
-
-    public function getApiKey()
-    {
-        return $this->apiKey;
-    }
-
-    public function setApiKey(string $apiKey)
-    {
-        $this->apiKey = $apiKey;
-
-        return $this;
     }
 }

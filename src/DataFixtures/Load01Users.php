@@ -13,11 +13,7 @@ class Load01Users extends Fixture
     public function load(ObjectManager $manager)
     {
         foreach ($this->getData('Users.json') as $datum) {
-            $user = (
-                new User()
-            )
-                ->setUsername($datum['name'])
-                ->setApiKey($datum['key']);
+            $user = (new User())->setUsername($datum['name']);
 
             $this->addReference($datum['reference'], $user);
 

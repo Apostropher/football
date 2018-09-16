@@ -1,13 +1,18 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        jwt_user_provider:
+            id: Football\Security\JWTUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
+            pattern: ^/leagues
+            stateless: true
+            simple_preauth:
+                authenticator: Football\Security\JWTAuthenticator
+            provider: jwt_user_provider
 
             # activate different ways to authenticate
 
@@ -20,5 +25,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/tokens, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/leagues, roles: ROLE_API }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

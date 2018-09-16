@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/leagues")
+ * @Route("/leagues", defaults={"_format": "json"})
  */
 class LeagueController extends AbstractFootballController implements LeagueControllerInterface
 {
