@@ -10,3 +10,9 @@
 8. Execute `bin/console server:start`
 9. Generate a token: `curl -X POST -H "Content-Type: application/json" http://localhost:8000/tokens -d '{"name":"A-NAME"}'`
 10. Use the token to make API requests to `http://localhost:8000/leagues`
+
+## Tests
+
+Behat: `bin/behat`
+
+PHPSpec: `bin/phpspec --verbose run`

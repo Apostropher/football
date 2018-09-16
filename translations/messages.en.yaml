@@ -1,0 +1,28 @@
+league:
+  not_found: League not found.
+  creation:
+    name:
+      blank: Please specify a name.
+team:
+  not_found: Team not found.
+  creation_or_replacement:
+    name:
+      blank: Please specify a name.
+    strip:
+      blank: Please specify a strip.
+jwt:
+  token:
+    invalid: The token is invalid.
+    expired: The token has expired.
+  body:
+    name:
+      invalid: The name is invalid.
+      blank: Please specify a name.
+    ttl:
+      not_null: Please specify a ttl.
+http:
+  request:
+    invalid: Invalid request.
+    unauthorised: Unauthorised.
+database:
+  error: Database error.

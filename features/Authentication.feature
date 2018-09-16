@@ -7,7 +7,7 @@ Feature:
         And the response should be in JSON
         And the JSON should be equal to:
         """
-        {"code":401,"message":"http.request.unauthorised"}
+        {"code":401,"message":"Unauthorised."}
         """
     
     Scenario: Authentication is successful if valid token is provided

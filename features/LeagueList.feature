@@ -67,6 +67,6 @@ Feature:
         """
         {
           "code": 404,
-          "message": "league.not_found"
+          "message": "League not found."
         }
         """
