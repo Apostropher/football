@@ -1,48 +1,73 @@
 <?php
 
 use Behat\Behat\Context\Context;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Testwork\Hook\Scope\AfterSuiteScope;
+use Behat\Testwork\Hook\Scope\BeforeSuiteScope;
+use Football\DataFixtures\Load01Users;
+use Symfony\Bundle\WebServerBundle\Command\ServerStartCommand;
+use Symfony\Bundle\WebServerBundle\Command\ServerStopCommand;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
- * This context class contains the definitions of the steps used by the demo 
+ * This context class contains the definitions of the steps used by the demo
  * feature file. Learn how to get started with Behat and BDD on Behat's website.
- * 
+ *
  * @see http://behat.org/en/latest/quick_start.html
  */
-class FeatureContext implements Context
+class FeatureContext implements KernelAwareContextInterface, SnippetAcceptingContext
 {
+    use KernelAwareContextTrait;
+
     /**
      * @var KernelInterface
      */
-    private $kernel;
+    protected $kernel;
 
-    /**
-     * @var Response|null
-     */
-    private $response;
+    private $filesPath;
 
-    public function __construct(KernelInterface $kernel)
+    public function __construct($filesPath)
     {
-        $this->kernel = $kernel;
+        $this->filesPath = $filesPath;
+    }
+
+    public function setKernel(KernelInterface $kernelInterface)
+    {
+        $this->kernel = $kernelInterface;
+    }
+
+    public function getKernel(): KernelInterface
+    {
+        return $this->kernel;
     }
 
     /**
-     * @When a demo scenario sends a request to :path
+     * @BeforeSuite
      */
-    public function aDemoScenarioSendsARequestTo(string $path)
+    public static function prepare(BeforeSuiteScope $scope)
     {
-        $this->response = $this->kernel->handle(Request::create($path, 'GET'));
+        $commandTester = new CommandTester(new ServerStartCommand());
+        $commandTester->execute([]);
     }
 
-    /**
-     * @Then the response should be received
-     */
-    public function theResponseShouldBeReceived()
+    /** @AfterSuite */
+    public static function teardown(AfterSuiteScope $scope)
     {
-        if ($this->response === null) {
-            throw new \RuntimeException('No response received');
-        }
+        $commandTester = new CommandTester(new ServerStopCommand());
+        $commandTester->execute([]);
+    }
+
+    /** @BeforeScenario */
+    public function before(BeforeScenarioScope $scope)
+    {
+        $this->buildAllSchema();
+        $this->loadFixtures(
+            'football',
+            [
+                Load01Users::class,
+            ]
+        );
     }
 }
