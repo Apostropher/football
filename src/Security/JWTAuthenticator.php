@@ -23,15 +23,15 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
     {
         $header = trim($request->headers->get(self::TOKEN_HEADER));
 
-        list($bearer, $apiKey) = explode(' ', $header);
+        $headerParts = explode(' ', $header);
 
-        if (!$apiKey) {
+        if (!isset($headerParts[1])) {
             throw new BadCredentialsException();
         }
 
         return new PreAuthenticatedToken(
             'anon.',
-            $apiKey,
+            $headerParts[1],
             $providerKey
         );
     }
