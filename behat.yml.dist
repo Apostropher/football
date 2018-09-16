@@ -1,0 +1,22 @@
+default:
+    suites:
+        default:
+            contexts:
+                - FeatureContext:
+                    filesPath: '%paths.base%/src/DataFixtures/Data'
+                - Behat\MinkExtension\Context\MinkContext
+                - behatch:context:json
+                - behatch:context:rest
+
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                bootstrap: features/bootstrap/bootstrap.php
+                class: Football\Kernel
+        Behat\MinkExtension:
+            base_url: "http://localhost:8000"
+            sessions:
+                default:
+                    symfony2: ~
+            files_path: '%paths.base%/src/DataFixtures/Data'
+        Behatch\Extension: ~

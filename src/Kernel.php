@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Football;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -14,6 +14,14 @@ class Kernel extends BaseKernel
     use MicroKernelTrait;
 
     const CONFIG_EXTS = '.{php,xml,yaml,yml}';
+
+    public function __construct($environment, $debug)
+    {
+        ini_set('date.timezone', 'UTC');
+        date_default_timezone_set('UTC');
+
+        parent::__construct($environment, $debug);
+    }
 
     public function getCacheDir()
     {
