@@ -73,6 +73,6 @@ Feature:
         """
         {
           "code": 404,
-          "message": "team.not_found"
+          "message": "Team not found."
         }
         """
