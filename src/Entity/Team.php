@@ -26,6 +26,12 @@ class Team extends AbstractLeague
      */
     private $league;
 
+    /**
+     * @var string
+     * @ORM\Column(name="strip", type="string", length=255)
+     */
+    private $strip;
+
     public function getLeague()
     {
         return $this->league;
@@ -34,6 +40,18 @@ class Team extends AbstractLeague
     public function setLeague(League $league)
     {
         $this->league = $league;
+
+        return $this;
+    }
+
+    public function getStrip()
+    {
+        return $this->strip;
+    }
+
+    public function setStrip(string $strip)
+    {
+        $this->strip = $strip;
 
         return $this;
     }

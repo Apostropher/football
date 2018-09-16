@@ -11,16 +11,27 @@ class EntityFactory implements EntityFactoryInterface
 {
     public function createLeague(LeagueModel $leagueModel): LeagueEntity
     {
-        return new LeagueEntity();
+        return (new LeagueEntity())->setName($leagueModel->name);
     }
 
     public function createTeam(TeamModel $teamModel, LeagueEntity $leagueEntity): TeamEntity
     {
-        return new TeamEntity();
+        $teamEntity = $this->mapTeam($teamModel, new TeamEntity());
+
+        $leagueEntity->addTeam($teamEntity);
+
+        return $teamEntity;
     }
 
     public function replaceTeam(TeamModel $teamModel, TeamEntity $teamEntity): TeamEntity
     {
-        return $teamEntity;
+        return $this->mapTeam($teamModel, $teamEntity);
+    }
+
+    private function mapTeam(TeamModel $teamModel, TeamEntity $teamEntity)
+    {
+        return $teamEntity
+            ->setName($teamModel->name)
+            ->setStrip($teamModel->strip);
     }
 }
