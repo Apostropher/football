@@ -32,7 +32,11 @@ interface LeagueServiceInterface
 
     public function listLeagues(FilterModel $filter): AbstractCollectionModel;
 
+    public function singleLeague($leagueId): LeagueModel;
+
     public function listTeams($leagueId, FilterModel $filter): AbstractCollectionModel;
+
+    public function singleTeam($leagueId, $teamId): TeamModel;
 
     /**
      * @throws FootballException

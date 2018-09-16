@@ -245,7 +245,6 @@ class LeagueServiceSpec extends ObjectBehavior
 
         $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn(null);
 
-
         $this->shouldThrow(NotFoundException::class)->during('deleteLeague', [$leagueId]);
     }
 
@@ -271,6 +270,33 @@ class LeagueServiceSpec extends ObjectBehavior
         $collection = $this->listLeagues($filter);
 
         $collection->shouldBeAnInstanceOf(LeagueCollectionModel::class);
+    }
+
+    function it_successfully_retrieves_a_single_league(
+        LeagueEntity $leagueEntity,
+        LeagueRepositoryInterface $leagueRepository,
+        ModelFactoryInterface $modelFactory
+    ) {
+        $leagueId = 1;
+
+        $leagueEntity->getName()->willReturn('League 1');
+        $leagueEntity->getId()->willReturn($leagueId);
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn($leagueEntity);
+
+        $modelFactory->singleLeague($leagueEntity)->shouldBeCalled()->willReturn(new LeagueModel());
+
+        $this->singleLeague($leagueId);
+    }
+
+    function it_should_throw_an_exception_if_league_is_non_existent_during_single_retrieval(
+        LeagueRepositoryInterface $leagueRepository
+    ) {
+        $leagueId = 1;
+
+        $leagueRepository->findUndeletedById($leagueId)->shouldBeCalled()->willReturn(null);
+
+        $this->shouldThrow(NotFoundException::class)->during('singleLeague', [$leagueId]);
     }
 
     function it_successfully_lists_teams(
@@ -302,5 +328,39 @@ class LeagueServiceSpec extends ObjectBehavior
         $collection = $this->listTeams($leagueId, $filter);
 
         $collection->shouldBeAnInstanceOf(TeamCollectionModel::class);
+    }
+
+    function it_successfully_retrieves_a_single_team(
+        LeagueEntity $leagueEntity,
+        TeamEntity $teamEntity,
+        TeamRepositoryInterface $teamRepository,
+        ModelFactoryInterface $modelFactory
+    ) {
+        $leagueId = 1;
+        $teamId = 1;
+
+        $leagueEntity->getName()->willReturn('League 1');
+        $leagueEntity->getId()->willReturn($leagueId);
+
+        $teamEntity->getName()->willReturn('Team 1');
+        $teamEntity->getId()->willReturn($teamId);
+        $teamEntity->getLeague()->willReturn($leagueEntity);
+
+        $teamRepository->findUndeletedByIdAndLeagueId($teamId, $leagueId)->shouldBeCalled()->willReturn($teamEntity);
+
+        $modelFactory->singleTeam($teamEntity)->shouldBeCalled()->willReturn(new TeamModel());
+
+        $this->singleTeam($leagueId, $teamId);
+    }
+
+    function it_should_throw_an_exception_if_team_is_non_existent_during_single_retrieval(
+        TeamRepositoryInterface $teamRepository
+    ) {
+        $leagueId = 1;
+        $teamId = 1;
+
+        $teamRepository->findUndeletedByIdAndLeagueId($teamId, $leagueId)->shouldBeCalled()->willReturn(null);
+
+        $this->shouldThrow(NotFoundException::class)->during('singleTeam', [$leagueId, $teamId]);
     }
 }

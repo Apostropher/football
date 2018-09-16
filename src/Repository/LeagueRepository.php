@@ -23,7 +23,8 @@ class LeagueRepository extends ServiceEntityRepository implements LeagueReposito
     {
         $qb = $this
             ->createUndeletedQueryBuilder()
-            ->orderBy('l.updatedAt', 'DESC');
+            ->addOrderBy('l.updatedAt', 'DESC')
+            ->addOrderBy('l.id', 'DESC');
 
         return $this->paginator->paginate($qb->getQuery(), $filter->page, $filter->limit/*, ['wrap-queries' => true]*/);
     }

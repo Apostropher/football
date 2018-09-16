@@ -23,7 +23,8 @@ class TeamRepository extends ServiceEntityRepository implements TeamRepositoryIn
     {
         $qb = $this
             ->createUndeletedByLeagueIdQueryBuilder($leagueId)
-            ->orderBy('t.updatedAt', 'DESC');
+            ->addOrderBy('t.updatedAt', 'DESC')
+            ->addOrderBy('t.id', 'DESC');
 
         return $this->paginator->paginate($qb->getQuery(), $filter->page, $filter->limit/*, ['wrap-queries' => true]*/);
     }
