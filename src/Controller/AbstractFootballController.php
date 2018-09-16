@@ -20,4 +20,13 @@ abstract class AbstractFootballController extends AbstractController
         $this->serializer = $serializer;
         $this->validator = $validator;
     }
+
+    protected function normalisePaginationLimit($limit, $maxLimit)
+    {
+        if ((int) $limit < 1) {
+            $limit = 1;
+        }
+
+        return $limit > $maxLimit ? $maxLimit : $limit;
+    }
 }
