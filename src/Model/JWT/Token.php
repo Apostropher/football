@@ -1,6 +1,6 @@
 <?php
 
-namespace Football\Model;
+namespace Football\Model\JWT;
 
 use JMS\Serializer\Annotation as JMSSerializer;
 

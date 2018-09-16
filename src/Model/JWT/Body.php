@@ -1,11 +1,11 @@
 <?php
 
-namespace Football\Model;
+namespace Football\Model\JWT;
 
 use JMS\Serializer\Annotation as JMSSerializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class JWT
+class Body
 {
     const DEFAULT_TTL = 3600;
 
@@ -21,13 +21,13 @@ class JWT
 
     /**
      * @JMSSerializer\Type("integer")
-     * @Assert\NotNull(message = "jwt.ttl.null")
+     * @Assert\NotNull(message = "jwt.body.ttl.not_null")
      */
     public $ttl = self::DEFAULT_TTL;
 
     /**
      * @JMSSerializer\Type("string")
-     * @Assert\NotBlank(message = "jwt.name.blank")
+     * @Assert\NotBlank(message = "jwt.body.name.blank")
      */
     public $name;
 }

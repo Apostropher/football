@@ -2,18 +2,24 @@
 
 namespace Football\Security;
 
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Football\Entity\User;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Football\Exception\FootballException;
 use Football\Repository\UserRepositoryInterface;
+use Football\Service\JWTServiceInterface;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class JWTUserProvider implements UserProviderInterface
 {
+    private $jwtService;
     private $userRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository)
-    {
+    public function __construct(
+        JWTServiceInterface $jwtService,
+        UserRepositoryInterface $userRepository
+    ) {
+        $this->jwtService = $jwtService;
         $this->userRepository = $userRepository;
     }
 
@@ -21,9 +27,11 @@ class JWTUserProvider implements UserProviderInterface
     {
         // Look up the username based on the token in the database, via
         // an API call, or do something entirely different
-        $username = $this->userRepository->getIdByKey($apiKey);
+        $name = $this->jwtService->validateToken($apiKey);
+
+        $username = $this->userRepository->getIdByName($name);
         if (!$username) {
-            throw new UnsupportedUserException();
+            throw new FootballException(sprintf('Token "%s" does not exist.', $apiKey));
         }
 
         return $username;
@@ -31,7 +39,7 @@ class JWTUserProvider implements UserProviderInterface
 
     public function loadUserByUsername($username)
     {
-        return $this->userRepository->findById($username);
+        return $this->userRepository->find($username);
     }
 
     public function refreshUser(UserInterface $user)

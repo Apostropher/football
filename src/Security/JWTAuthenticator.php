@@ -2,16 +2,17 @@
 
 namespace Football\Security;
 
+use Football\Exception\FootballException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 
 class JWTAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
@@ -20,8 +21,9 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
 
     public function createToken(Request $request, $providerKey)
     {
-        // look for an apikey query parameter
-        $apiKey = $request->headers->get(self::TOKEN_HEADER);
+        $header = trim($request->headers->get(self::TOKEN_HEADER));
+
+        list($bearer, $apiKey) = explode(' ', $header);
 
         if (!$apiKey) {
             throw new BadCredentialsException();
@@ -41,23 +43,22 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
 
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
-        if (!$userProvider instanceof ApiKeyUserProvider) {
+        if (!$userProvider instanceof JWTUserProvider) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'The user provider must be an instance of ApiKeyUserProvider (%s was given).',
+                    'The user provider must be an instance of JWTUserProvider (%s was given).',
                     get_class($userProvider)
                 )
             );
         }
 
         $apiKey = $token->getCredentials();
-        $username = $userProvider->getUsernameForApiKey($apiKey);
 
-        if (!$username) {
-            // CAUTION: this message will be returned to the client
-            // (so don't put any un-trusted messages / error strings here)
+        try {
+            $username = $userProvider->getUsernameForApiKey($apiKey);
+        } catch (FootballException $e) {
             throw new CustomUserMessageAuthenticationException(
-                sprintf('API Key "%s" does not exist.', $apiKey)
+                $e->getMessage()
             );
         }
 
@@ -76,7 +77,7 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
         // this contains information about *why* authentication failed
         // use it, or return your own message
         throw new UnauthorizedHttpException(
-            sprintf('%s: abcde', self::TOKEN_HEADER),
+            sprintf('%s: Bearer abcde', self::TOKEN_HEADER),
             self::UNAUTHORISED_MESSAGE
         );
     }
