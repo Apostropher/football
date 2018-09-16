@@ -56,11 +56,11 @@ class JWTService implements JWTServiceInterface
             throw new FootballException(self::INVALID_TOKEN_MSG);
         }
 
-        $bodyModel = base64_decode($this->serializer->deserialize(
-            $bodyString,
+        $bodyModel = $this->serializer->deserialize(
+            base64_decode($bodyString),
             JWTModel\Body::class,
             'json'
-        ));
+        );
 
         if (time() > $bodyModel->exp) {
             throw new FootballException(self::EXPIRED_TOKEN_MSG);
