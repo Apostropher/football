@@ -2,14 +2,17 @@
 
 namespace Football\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Football\Entity\Team as TeamEntity;
 use Football\Model\Search\Filter as FilterModel;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class TeamRepository implements TeamRepositoryInterface
+class TeamRepository extends ServiceEntityRepository implements TeamRepositoryInterface
 {
+    private $paginator;
+
     public function __construct(RegistryInterface $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, TeamEntity::class);
