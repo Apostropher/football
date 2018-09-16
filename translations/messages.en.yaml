@@ -26,4 +26,3 @@ http:
     unauthorised: Unauthorised.
 database:
   error: Database error.
-  
