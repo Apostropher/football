@@ -14,14 +14,14 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
         parent::__construct($registry, User::class);
     }
 
-    public function getIdByName($name): ?int
+    public function getIdByUsername($username): ?int
     {
         try {
             $result = $this
                 ->createQueryBuilder('u')
                 ->select('u.id')
-                ->where('u.name = :name')
-                ->setParameter('name', $name)
+                ->where('u.username = :username')
+                ->setParameter('username', $username)
                 ->getQuery()
                 ->getSingleScalarResult();
         } catch (NoResultException $e) {

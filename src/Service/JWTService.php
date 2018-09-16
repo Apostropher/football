@@ -3,7 +3,9 @@
 namespace Football\Service;
 
 use Football\Exception\FootballException;
+use Football\Exception\NotFoundException;
 use Football\Model\JWT as JWTModel;
+use Football\Repository\UserRepositoryInterface;
 use JMS\Serializer\SerializerInterface;
 
 class JWTService implements JWTServiceInterface
@@ -11,20 +13,29 @@ class JWTService implements JWTServiceInterface
     const TOKEN_FORMAT = '%s.%s.%s';
     const INVALID_TOKEN_MSG = 'jwt.token.invalid';
     const EXPIRED_TOKEN_MSG = 'jwt.token.expired';
+    const INVALID_BODY_NAME_MSG = 'jwt.body.name.invalid';
 
+    private $userRepository;
     private $serializer;
     private $secret;
 
     public function __construct(
+        UserRepositoryInterface $userRepository,
         SerializerInterface $serializer,
         string $secret
     ) {
+        $this->userRepository = $userRepository;
         $this->serializer = $serializer;
         $this->secret = $secret;
     }
 
     public function generateToken(JWTModel\Body $jwt): JWTModel\Token
     {
+        $id = $this->userRepository->getIdByUsername($jwt->name);
+        if (!$id) {
+            throw new NotFoundException(self::INVALID_BODY_NAME_MSG);
+        }
+
         $headerString = base64_encode($this->serializer->serialize(
             new JWTModel\Header(),
             'json'

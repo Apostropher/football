@@ -29,12 +29,12 @@ class JWTUserProvider implements UserProviderInterface
         // an API call, or do something entirely different
         $name = $this->jwtService->validateToken($apiKey);
 
-        $username = $this->userRepository->getIdByName($name);
-        if (!$username) {
+        $id = $this->userRepository->getIdByUsername($name);
+        if (!$id) {
             throw new FootballException(sprintf('Token "%s" does not exist.', $apiKey));
         }
 
-        return $username;
+        return $id;
     }
 
     public function loadUserByUsername($username)

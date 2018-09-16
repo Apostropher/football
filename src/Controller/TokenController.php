@@ -3,6 +3,7 @@
 namespace Football\Controller;
 
 use Football\Exception\FootballException;
+use Football\Exception\NotFoundException;
 use Football\Model\JWT as JWTModel;
 use Football\Service\JWTServiceInterface;
 use JMS\Serializer\Exception\Exception as JMSSerializerException;
@@ -10,6 +11,7 @@ use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -54,6 +56,8 @@ class TokenController extends AbstractFootballController
             );
         } catch (JMSSerializerException $e) {
             throw new BadRequestHttpException(static::INVALID_REQUEST_MSG);
+        } catch (NotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage());
         } catch (FootballException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }

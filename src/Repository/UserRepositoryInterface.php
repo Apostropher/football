@@ -8,5 +8,5 @@ interface UserRepositoryInterface
 {
     public function __construct(RegistryInterface $registry);
 
-    public function getIdByName($name): ?int;
+    public function getIdByUsername($username): ?int;
 }
