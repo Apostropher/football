@@ -35,7 +35,7 @@ class TokenController extends AbstractFootballController implements TokenControl
     /**
      * @Route("", name="token_creation", methods={"POST"})
      */
-    public function createLeague(Request $request): Response
+    public function createToken(Request $request): Response
     {
         try {
             $jwtModel = $this->serializer->deserialize($request->getContent(), JWTModel\Body::class, 'json');
