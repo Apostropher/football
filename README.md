@@ -2,7 +2,7 @@
 
 1. Clone the repository
 2. Copy `.env.dist` to `.env`
-3. Modify the `DATABASE_DRIVER` and `DATABASE_URL` paramaters inside the `.env` file
+3. Modify the `APP_SECRET`, `DATABASE_DRIVER` and `DATABASE_URL` paramaters inside the `.env` file as required
 4. Execute `composer install`
 5. Execute `bin/console doctrine:database:create`
 6. Execute `bin/console doctrine:migration:migrate`

@@ -33,6 +33,6 @@ services:
         class: Football\Service\JWTService
         public: true
         arguments:
-            $secret: '%kernel.environment%'
+            $secret: '%kernel.secret%'
     Football\Service\JWTService: '@app.service.jwt'
     Football\Service\JWTServiceInterface: '@Football\Service\JWTService'
